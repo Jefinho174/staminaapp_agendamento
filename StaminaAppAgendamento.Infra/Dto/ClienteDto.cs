@@ -1,13 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq.Expressions;
 using StaminaAppAgendamento.Dominio.Entidades;
 using StaminaAppAgendamento.Dominio.Enums;
 
 namespace StaminaAppAgendamento.Infra.Dto
 {
+    [Table("Cliente")]
     public class ClienteDto 
     {
+        [Key]
         public string Id { get;  set; }
         public string PrimeiroNome { get; set; }
         public string SegundoNome { get; set; }

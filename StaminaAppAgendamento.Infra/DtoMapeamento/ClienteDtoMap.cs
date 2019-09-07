@@ -8,7 +8,7 @@ namespace StaminaAppAgendamento.Infra.DtoMapeamento
         public ClienteDtoMap()
         {
             ToTable("Cliente");
-            Map(x => x.Id).ToColumn("Id").IsKey();
+            Map(x => x.Id).ToColumn("Id").IsKey().IsIdentity();
             Map(x => x.PrimeiroNome).ToColumn("PrimeiroNome");
             Map(x => x.SegundoNome).ToColumn("SegundoNome");
             Map(x => x.TipoPessoa).ToColumn("TipoPessoa");

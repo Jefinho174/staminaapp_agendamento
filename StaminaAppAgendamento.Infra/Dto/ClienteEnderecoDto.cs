@@ -1,9 +1,12 @@
 using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StaminaAppAgendamento.Infra.Dto
 {
     public class ClienteEnderecoDto
     {
+        [Key]
         public Guid Id { get; set; }
         public Guid IdCliente { get; set; }
         public string Cep { get; set; }

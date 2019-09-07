@@ -43,13 +43,14 @@ namespace StaminaAppAgendamento.Dominio.Handlers
                 }
 
                 // validar se tipo de documento foi definido
-                if (!(documentocliente == null))
+                if (documentocliente != null)
                 {
                     Cliente cliente = new Cliente(nome, request.TipoPessoa, documentocliente, request.Rg);
                     if (cliente.Valid)
                     {
                         var xx = _clienteRepositorio.GetList(x => x.TipoPessoa == ETipoPessoa.Fisica);
-                        if(_clienteRepositorio.ExisteCliente(cliente)){
+                        var xxxx = _clienteRepositorio.GetList(x => x.Documento.Codigo == "123");
+                        if (_clienteRepositorio.ExisteCliente(cliente)){
                             response.Sucesso = false;
                             response.Mensagem = "Cliente já foi cadastrado com esse documento.";
                             return Task.FromResult(response);
