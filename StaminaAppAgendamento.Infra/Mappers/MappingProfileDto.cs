@@ -29,12 +29,12 @@ namespace StaminaAppAgendamento.Infra.Mappers
             
             CreateMap<ClienteDto,Cliente>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.Parse(src.Id)))
-                .ForMember(dest => dest.Documento , opt => opt.MapFrom(src => src.TipoPessoa.Equals(ETipoPessoa.Juridica) 
-                                                                              ? new Documento(src.Documento,ETipoDocumento.Cnpj) 
-                                                                              : new Documento(src.Documento,ETipoDocumento.Cpf)))
-                .ForMember(dest => dest.Nome, opt => opt.MapFrom(src => new Nome(src.PrimeiroNome,src.SegundoNome)));
-            
+                .ForPath(dest => dest.Documento.Codigo , opt => opt.MapFrom(src => src.Documento))
+                .ForCtorParam("documento", opt => opt.MapFrom(src => src.TipoPessoa.Equals(ETipoPessoa.Juridica)
+                                                                                ? new Documento(src.Documento, ETipoDocumento.Cnpj)
+                                                                                : new Documento(src.Documento, ETipoDocumento.Cpf)))
+                .ForCtorParam("nome", opt => opt.MapFrom(src => new Nome(src.PrimeiroNome, src.SegundoNome)));
         }
-         
+
     }
 }
