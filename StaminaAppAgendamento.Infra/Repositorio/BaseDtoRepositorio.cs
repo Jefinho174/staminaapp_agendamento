@@ -5,6 +5,7 @@ using AutoMapper;
 using Dommel;
 using MySql.Data.MySqlClient;
 using StaminaAppAgendamento.Core.Entidades;
+using StaminaAppAgendamento.CrossCutting.Configuracoes;
 using StaminaAppAgendamento.Dominio.Repositorios;
 using StaminaAppAgendamento.Infra.Dto;
 
@@ -15,21 +16,21 @@ namespace StaminaAppAgendamento.Infra.Repositorio
         where DtoModelo : class
     {
 
-        public string StringConeccaoBanco { get; private set; }
-        public readonly IMapper _mapper;
-        public IDto<EntidadeDominio, DtoModelo> Dto;
+        protected readonly ConexaoDBConfig _config;
+        protected readonly IMapper _mapper;
+        protected IDto<EntidadeDominio, DtoModelo> Dto;
 
-        public BaseDtoRepositorio(string stringConeccaoBanco, IMapper mapper)
+        public BaseDtoRepositorio(ConexaoDBConfig config, IMapper mapper)
         {
             _mapper = mapper;
-            StringConeccaoBanco = stringConeccaoBanco;
+            _config = config;
         }
 
         public bool Delete(int id)
         {
             try
             {
-                using (var db = new MySqlConnection(StringConeccaoBanco))
+                using (var db = new MySqlConnection(this._config.DBConnectionString))
                 {
                     var entity = GetById(id);
                     if (entity == null)
@@ -49,7 +50,7 @@ namespace StaminaAppAgendamento.Infra.Repositorio
         {
             try
             {
-                using (var db = new MySqlConnection(StringConeccaoBanco))
+                using (var db = new MySqlConnection(this._config.DBConnectionString))
                 {
                     var dbresult = db.GetAll<DtoModelo>();
                     return _mapper.Map<IEnumerable<EntidadeDominio>>(dbresult);
@@ -65,7 +66,7 @@ namespace StaminaAppAgendamento.Infra.Repositorio
         {
             try
             {
-                using (var db = new MySqlConnection(StringConeccaoBanco))
+                using (var db = new MySqlConnection(this._config.DBConnectionString))
                 {
                     var dbresult = db.Get<DtoModelo>(id);
                     return _mapper.Map<EntidadeDominio>(dbresult);
@@ -81,7 +82,7 @@ namespace StaminaAppAgendamento.Infra.Repositorio
         {
             try
             {
-                using (var db = new MySqlConnection(StringConeccaoBanco))
+                using (var db = new MySqlConnection(this._config.DBConnectionString))
                 {
                     Expression<Func<DtoModelo, bool>> expression = (Expression<Func<DtoModelo, bool>>) _mapper.Map<Expression<Func<EntidadeDominio, bool>>,Expression<Func<DtoModelo, bool>>>(predicate);
                     var xx = db.Select<DtoModelo>(expression);
@@ -100,14 +101,14 @@ namespace StaminaAppAgendamento.Infra.Repositorio
         {
             try
             {
-                using (var db = new MySqlConnection(StringConeccaoBanco))
+                using (var db = new MySqlConnection(this._config.DBConnectionString))
                 {
                     DtoModelo viewModel = (DtoModelo)_mapper.Map<EntidadeDominio, DtoModelo>(entity);
                     db.Insert(viewModel);
                     return true;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -117,7 +118,7 @@ namespace StaminaAppAgendamento.Infra.Repositorio
         {
             try
             {
-                using (var db = new MySqlConnection(StringConeccaoBanco))
+                using (var db = new MySqlConnection(this._config.DBConnectionString))
                 {
                     DtoModelo viewModel = (DtoModelo)_mapper.Map<EntidadeDominio, DtoModelo>(entity);
                     return db.Update(viewModel);

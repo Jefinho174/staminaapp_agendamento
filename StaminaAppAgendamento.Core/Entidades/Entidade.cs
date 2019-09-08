@@ -5,13 +5,12 @@ namespace StaminaAppAgendamento.Core.Entidades
 {
     public class Entidade : Notifiable
     {
-        public Guid Id { get;  set; }
+        public Guid Id { get;  set; } = Guid.NewGuid();
         public DateTime DataAtualizacao { get; set; }
         public DateTime? DataFinalizacao { get; set; }
 
         public Entidade()
         {
-            Id = Guid.NewGuid();
             DataAtualizacao = DateTime.Now;
         }
 

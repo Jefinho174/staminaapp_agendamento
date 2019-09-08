@@ -14,15 +14,23 @@ namespace StaminaAppAgendamento.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public readonly IConfigurationRoot _configurationRoot;
 
-        public IConfiguration Configuration { get; }
+        public Startup(IHostingEnvironment env)
+        {
+            var builder = new ConfigurationBuilder()
+               .SetBasePath(env.ContentRootPath)
+               .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+               .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+               .AddEnvironmentVariables();
+
+            this._configurationRoot = builder.Build();
+        }
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton(this._configurationRoot);
+            services.AdicionaConfiguracoes();
             services.AddInfraIoC();
             services.AddMediatR(AppDomain.CurrentDomain.Load("StaminaAppAgendamento.Dominio"));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(options =>

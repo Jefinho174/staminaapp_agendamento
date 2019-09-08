@@ -4,8 +4,14 @@ using AutoMapper.Extensions.ExpressionMapping;
 using Dapper.FluentMap;
 using Dapper.FluentMap.Dommel;
 using Dommel;
+using FluentMigrator;
 using FluentMigrator.Runner;
+using FluentMigrator.Runner.Generators.MySql;
+using FluentMigrator.Runner.Processors.MySql;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using MySql.Data.MySqlClient;
+using StaminaAppAgendamento.CrossCutting.Configuracoes;
 using StaminaAppAgendamento.Dominio.Repositorios;
 using StaminaAppAgendamento.Infra.DtoMapeamento;
 using StaminaAppAgendamento.Infra.Repositorio;
@@ -21,25 +27,19 @@ namespace StaminaAppAgendamento.Infra.IoC
                 cfg.AddExpressionMapping();
             },typeof(InfraIoC).Assembly);
 
-            services.AddScoped<IClienteRepositorio>(factory =>
-            {
-                var mapper = services.BuildServiceProvider(false).GetService<IMapper>();
-                return new ClienteRepositorio("server=192.168.99.100;port=3306;database=staminaapp_agendamento;userid=root;password=root", mapper);
-            });
+            services.AddScoped<IClienteRepositorio, ClienteRepositorio>();
 
             SetKeyPropertyResolver(new DefaultKeyPropertyResolver());
-
-            //FluentMapper.Initialize(config =>
-            //{
-            //    config.AddMap(new ClienteDtoMap());
-            //    config.ForDommel();
-            //});
 
             services
                 .AddFluentMigratorCore()
                 .ConfigureRunner(rb => rb
                     .AddMySql5()
-                    .WithGlobalConnectionString("server=192.168.99.100;port=3306;database=staminaapp_agendamento;userid=root;password=root")
+                    .WithGlobalConnectionString(serviceProvider =>
+                    {
+                        var config = serviceProvider.GetService<ConexaoDBConfig>();
+                        return config.DBConnectionString;
+                    })
                     .ScanIn(typeof(InfraIoC).Assembly).For.Migrations());
             UpdateDatabase(services.BuildServiceProvider(false));
             return services;
@@ -47,10 +47,20 @@ namespace StaminaAppAgendamento.Infra.IoC
 
         private static void UpdateDatabase(IServiceProvider serviceProvider)
         {
+
             using (var scope = serviceProvider.CreateScope())
             {
+                var config = scope.ServiceProvider.GetService<ConexaoDBConfig>();
+                using (var db = new MySqlConnection(config.ConnectionString))
+                using (var cmd = new MySqlCommand($"CREATE DATABASE IF NOT EXISTS {config.Database}", db))
+                {
+                    db.Open();
+                    cmd.ExecuteNonQuery();
+                }
+
                 var runner = scope.ServiceProvider.GetService<IMigrationRunner>();
-                runner.MigrateUp();
+                if (runner.HasMigrationsToApplyUp())
+                    runner.MigrateUp();
             }
         }
     }

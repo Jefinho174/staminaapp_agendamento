@@ -9,7 +9,7 @@ namespace StaminaAppAgendamento.Infra.Migrations
         public override void Up()
         {
             Create.Table("Cliente")
-                .WithColumn("Id").AsString().PrimaryKey().NotNullable()
+                .WithColumn("Id").AsString(50).PrimaryKey().NotNullable()
                 .WithColumn("PrimeiroNome").AsString()
                 .WithColumn("SegundoNome").AsString()
                 .WithColumn("TipoPessoa").AsInt16()
@@ -21,8 +21,8 @@ namespace StaminaAppAgendamento.Infra.Migrations
             Create.Index("idx_tipo_pessoa").OnTable("Cliente").OnColumn("TipoPessoa");
 
             Create.Table("ClienteEndereco")
-                .WithColumn("Id").AsString().PrimaryKey().NotNullable()
-                .WithColumn("ClienteId").AsString().NotNullable()
+                .WithColumn("Id").AsString(50).PrimaryKey().NotNullable()
+                .WithColumn("ClienteId").AsString(20).NotNullable()
                 .WithColumn("Cep").AsString()
                 .WithColumn("Estado").AsString()
                 .WithColumn("Cidade").AsString()
@@ -40,8 +40,8 @@ namespace StaminaAppAgendamento.Infra.Migrations
                 .OnDeleteOrUpdate(System.Data.Rule.Cascade);
 
             Create.Table("ClienteTelefone")
-                .WithColumn("Id").AsString().PrimaryKey().NotNullable()
-                .WithColumn("ClienteId").AsString().NotNullable()
+                .WithColumn("Id").AsString(50).PrimaryKey().NotNullable()
+                .WithColumn("ClienteId").AsString(20).NotNullable()
                 .WithColumn("Ddd").AsString()
                 .WithColumn("Numero").AsString()
                 .WithColumn("Observacao").AsString()
@@ -54,8 +54,8 @@ namespace StaminaAppAgendamento.Infra.Migrations
                 .OnDeleteOrUpdate(System.Data.Rule.Cascade);
 
             Create.Table("ClienteEmail")
-                .WithColumn("Id").AsString().PrimaryKey().NotNullable()
-                .WithColumn("ClienteId").AsString().NotNullable()
+                .WithColumn("Id").AsString(50).PrimaryKey().NotNullable()
+                .WithColumn("ClienteId").AsString(20).NotNullable()
                 .WithColumn("Descricao").AsString()
                 .WithColumn("DataAtualizacao").AsDateTime().WithDefaultValue(DateTime.Now)
                 .WithColumn("DataFinalizacao").AsDateTime().Nullable();

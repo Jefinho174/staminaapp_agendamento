@@ -12,7 +12,8 @@ namespace StaminaAppAgendamento.Infra.Dto
     public class ClienteDto 
     {
         [Key]
-        public string Id { get;  set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string Id { get; set; }
         public string PrimeiroNome { get; set; }
         public string SegundoNome { get; set; }
         public ETipoPessoa TipoPessoa  { get; set; }
