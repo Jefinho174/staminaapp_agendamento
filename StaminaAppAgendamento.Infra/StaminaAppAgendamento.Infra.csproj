@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\StaminaAppAgendamento.Core\StaminaAppAgendamento.Core.csproj" />
+    <ProjectReference Include="..\StaminaAppAgendamento.CrossCutting\StaminaAppAgendamento.CrossCutting.csproj" />
     <ProjectReference Include="..\StaminaAppAgendamento.Dominio\StaminaAppAgendamento.Dominio.csproj" />
   </ItemGroup>
 
